@@ -4,8 +4,6 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Student ID Card Generator</title>
-
-  <!-- ✅ Styles -->
   <style> 
     body {
       font-family: 'Segoe UI', sans-serif;
@@ -127,8 +125,6 @@
       background: #117a8b;
     }
   </style>
-
-  <!-- ✅ Libraries for PDF/Image -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
@@ -136,8 +132,6 @@
 <body>
   <div class="container">
     <h1>Student ID Card Generator</h1>
-
-    <!-- ✅ Form -->
     <form id="student-form">
       <input type="text" id="name" placeholder="Full Name" required />
       <input type="text" id="grade" placeholder="Grade/Class" required />
@@ -146,8 +140,6 @@
       <input type="file" id="photo" accept="image/*" />
       <button type="submit">Generate ID Card</button>
     </form>
-
-    <!-- ✅ ID Card -->
     <div id="id-card" class="id-card hidden">
       <div class="card-header">
         <h2 id="schoolDisplay">School Name</h2>
@@ -164,13 +156,9 @@
         <p>Authorized by School Management</p>
       </div>
     </div>
-
-    <!-- ✅ Download Buttons -->
     <button id="download-pdf" class="hidden">Download ID Card as PDF</button>
     <button id="download-image" class="hidden">Download ID Card as Image</button>
   </div>
-
-  <!-- ✅ Script -->
   <script>
     document.getElementById('student-form').addEventListener('submit', function (e) {
       e.preventDefault();
@@ -200,8 +188,6 @@
       document.getElementById('download-pdf').classList.remove('hidden');
       document.getElementById('download-image').classList.remove('hidden');
     });
-
-    // ✅ Download as PDF
     document.getElementById('download-pdf').addEventListener('click', function () {
       const card = document.getElementById('id-card');
       html2canvas(card).then(canvas => {
@@ -215,8 +201,6 @@
         pdf.save('Student_ID_Card.pdf');
       });
     });
-
-    // ✅ Download as Image
     document.getElementById('download-image').addEventListener('click', function () {
       const card = document.getElementById('id-card');
       html2canvas(card).then(canvas => {
