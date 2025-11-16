@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Student ID Card Generator</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      background: linear-gradient(135deg, #e0eafc, #cfdef3);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 40px;
+    }
+
+    .container {
+      max-width: 550px;
+      width: 100%;
+      background: #fff;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 12px 30px rgba(0,0,0,0.2);
+      animation: fadeIn 1s ease-in-out;
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #2c7be5;
+    }
+
+    form input, form button {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 14px;
+    }
+
+    form button {
+      background: #2c7be5;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      font-weight: bold;
+      transition: 0.3s;
+    }
+    form button:hover { background: #1a5edc; transform: scale(1.03); }
+
+    /* 🔹 ID Card Design */
+    .id-card {
+      width: 320px;
+      height: 200px;
+      margin: 25px auto;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+      background: white;
+      border: 2px solid #2c7be5;
+    }
+
+    .id-header {
+      background: #2c7be5;
+      color: white;
+      padding: 6px;
+      text-align: center;
+      font-size: 16px;
+      font-weight: bold;
+    }
+
+    .id-body {
+      display: flex;
+      padding: 10px;
+    }
+
+    .id-body img {
+      width: 80px;
+      height: 100px;
+      object-fit: cover;
+      border-radius: 8px;
+      border: 2px solid #2c7be5;
+      margin-right: 12px;
+    }
+
+    .id-info {
+      font-size: 13px;
+    }
+    .id-info p { margin: 3px 0; }
+
+    .id-footer {
+      background: #f4f9ff;
+      text-align: center;
+      font-size: 11px;
+      padding: 5px;
+      color: #444;
+    }
+
+    #download-pdf, #download-image {
+      margin-top: 10px;
+      width: 100%;
+      padding: 10px;
+      font-weight: bold;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    #download-pdf { background: #28a745; color: white; }
+    #download-pdf:hover { background: #218838; transform: scale(1.03); }
+    #download-image { background: #17a2b8; color: white; }
+    #download-image:hover { background: #117a8b; transform: scale(1.03); }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+
+  <!-- ✅ Libraries -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body>
+
+  <div class="container">
+    <h2>Student ID Card Generator</h2>
+    <form id="student-form">
+      <input type="text" id="name" placeholder="Full Name" required />
+      <input type="text" id="grade" placeholder="Grade/Class" required />
+      <input type="text" id="school" placeholder="School Name" required />
+      <input type="text" id="idNumber" placeholder="Student ID Number" required />
+      <input type="file" id="photo" accept="image/*" />
+      <button type="submit">Generate ID Card</button>
+    </form>
+
+    <!-- ✅ ID Card Preview -->
+    <div id="id-card" class="id-card hidden">
+      <div class="id-header" id="schoolDisplay">School Name</div>
+      <div class="id-body">
+        <img id="photoDisplay" src="" alt="Student Photo" />
+        <div class="id-info">
+          <p><strong>Name:</strong> <span id="nameDisplay"></span></p>
+          <p><strong>Grade:</strong> <span id="gradeDisplay"></span></p>
+          <p><strong>ID:</strong> <span id="idNumberDisplay"></span></p>
+        </div>
+      </div>
+      <div class="id-footer">Authorized by School Management</div>
+    </div>
+
+    <button id="download-pdf" class="hidden">Download as PDF</button>
+    <button id="download-image" class="hidden">Download as Image</button>
+  </div>
+
+  <script>
+    document.getElementById('student-form').addEventListener('submit', function (e) {
+      e.preventDefault();
+
+      const name = document.getElementById('name').value;
+      const grade = document.getElementById('grade').value;
+      const school = document.getElementById('school').value;
+      const idNumber = document.getElementById('idNumber').value;
+      const photoInput = document.getElementById('photo');
+
+      document.getElementById('nameDisplay').textContent = name;
+      document.getElementById('gradeDisplay').textContent = grade;
+      document.getElementById('schoolDisplay').textContent = school;
+      document.getElementById('idNumberDisplay').textContent = idNumber;
+
+      if (photoInput.files && photoInput.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          document.getElementById('photoDisplay').src = e.target.result;
+        };
+        reader.readAsDataURL(photoInput.files[0]);
+      } else {
+        document.getElementById('photoDisplay').src = '';
+      }
+
+      document.getElementById('id-card').classList.remove('hidden');
+      document.getElementById('download-pdf').classList.remove('hidden');
+      document.getElementById('download-image').classList.remove('hidden');
+    });
+
+    // ✅ Download as PDF
+    document.getElementById('download-pdf').addEventListener('click', function () {
+      const card = document.getElementById('id-card');
+      html2canvas(card).then(canvas => {
+        const imgData = canvas.toDataURL('image/png');
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF("landscape", "pt", [350, 220]); // Card-size
+        pdf.addImage(imgData, 'PNG', 10, 10, 330, 200);
+        pdf.save('Student_ID_Card.pdf');
+      });
+    });
+
+    // ✅ Download as Image
+    document.getElementById('download-image').addEventListener('click', function () {
+      const card = document.getElementById('id-card');
+      html2canvas(card).then(canvas => {
+        const link = document.createElement('a');
+        link.href = canvas.toDataURL('image/png');
+        link.download = 'Student_ID_Card.png';
+        link.click();
+      });
+    });
+  </script>
+</body>
+</html>
